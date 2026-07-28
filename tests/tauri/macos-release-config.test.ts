@@ -99,6 +99,11 @@ describe("macOS release configuration", () => {
     expect(ciWorkflow).toContain("ubuntu-latest");
     expect(ciWorkflow).toContain("Install Linux system dependencies");
     expect(ciWorkflow).toContain("pnpm ${{ matrix.build_script }}");
+    expect(ciWorkflow).toContain("Upload Windows package artifacts");
+    expect(ciWorkflow).toContain("target/release/bundle/nsis/*.exe");
+    expect(ciWorkflow).toContain("Upload macOS package artifacts");
+    expect(ciWorkflow).toContain("target/release/bundle/macos/*.app");
+    expect(ciWorkflow).toContain("target/release/bundle/dmg/*.dmg");
     expect(ciWorkflow).toContain("Upload Linux package artifacts");
     expect(ciWorkflow).toContain("target/release/bundle/appimage/*.AppImage");
     expect(ciWorkflow).toContain("target/release/bundle/deb/*.deb");
