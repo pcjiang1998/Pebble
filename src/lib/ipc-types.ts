@@ -35,6 +35,12 @@ export interface Folder {
   sort_order: number;
 }
 
+/** @rust src-tauri/src/commands/folders.rs → ImapSyncFolderSettings */
+export interface ImapSyncFolderSettings {
+  folders: Folder[];
+  selected_remote_ids: string[];
+}
+
 /** @rust pebble-core/src/types.rs → EmailAddress */
 export interface EmailAddress {
   name: string | null;

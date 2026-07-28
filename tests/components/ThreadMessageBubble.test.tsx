@@ -35,7 +35,7 @@ const message: Message = {
   from_address: "sender@example.com",
   from_name: "Sender",
   to_list: [{ name: null, address: "user@example.com" }],
-  cc_list: [],
+  cc_list: [{ name: null, address: "cc@example.com" }],
   bcc_list: [],
   has_attachments: false,
   is_read: true,
@@ -52,6 +52,12 @@ const message: Message = {
 };
 
 describe("ThreadMessageBubble", () => {
+  it("shows copied recipients when expanded", () => {
+    render(<ThreadMessageBubble message={message} defaultExpanded />);
+
+    expect(document.body.textContent).toContain("Cc: cc@example.com");
+  });
+
   it("uses relaxed privacy mode by default when rendering expanded thread messages", async () => {
     localStorage.removeItem("pebble-privacy-mode");
 

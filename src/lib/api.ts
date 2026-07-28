@@ -14,6 +14,7 @@ export type {
   EmailAddress,
   Folder,
   HttpProxyConfig,
+  ImapSyncFolderSettings,
   ImportedBackgroundImage,
   KanbanCard,
   KanbanColumnType,
@@ -47,6 +48,7 @@ import type {
   ConnectionSecurity,
   Folder,
   HttpProxyConfig,
+  ImapSyncFolderSettings,
   KanbanCard,
   KanbanColumnType,
   KnownContact,
@@ -245,6 +247,20 @@ export async function deleteAccount(accountId: string): Promise<void> {
 
 export async function listFolders(accountId: string): Promise<Folder[]> {
   return invoke<Folder[]>("list_folders", { accountId });
+}
+
+export async function getImapSyncFolders(accountId: string): Promise<ImapSyncFolderSettings> {
+  return invoke<ImapSyncFolderSettings>("get_imap_sync_folders", { accountId });
+}
+
+export async function updateImapSyncFolders(
+  accountId: string,
+  selectedRemoteIds: string[],
+): Promise<ImapSyncFolderSettings> {
+  return invoke<ImapSyncFolderSettings>("update_imap_sync_folders", {
+    accountId,
+    selectedRemoteIds,
+  });
 }
 
 // ─── Message API ─────────────────────────────────────────────────────────────

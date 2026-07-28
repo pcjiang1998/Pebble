@@ -32,6 +32,14 @@ pub struct SyncState {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub smtp: Option<serde_json::Value>,
 
+    /// Explicit IMAP mailbox selection, stored as provider remote IDs.
+    ///
+    /// `None` preserves the legacy behaviour of syncing every selectable
+    /// mailbox. `Some(...)` enables account-level selection; Inbox is always
+    /// included by the IMAP worker even when it is absent from this list.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub selected_imap_folder_remote_ids: Option<Vec<String>>,
+
     /// Any fields we don't yet model — preserved verbatim on write so
     /// round-tripping through [`Store::update_sync_state`] never drops data.
     #[serde(flatten)]

@@ -16,7 +16,7 @@ const mockMessage: Message = {
   from_address: "sender@example.com",
   from_name: "Sender",
   to_list: [{ name: "Destination", address: "destination@example.com" }],
-  cc_list: [],
+  cc_list: [{ name: "Copied teammate", address: "cc@example.com" }],
   bcc_list: [],
   has_attachments: false,
   is_read: true,
@@ -156,6 +156,7 @@ describe("MessageDetail selected-text context actions", () => {
     render(<MessageDetail messageId="message-1" onBack={vi.fn()} />);
 
     expect(screen.getByText(/destination@example\.com/)).toBeTruthy();
+    expect(screen.getByText(/cc@example\.com/)).toBeTruthy();
     expect(screen.queryByText(/current@example\.com/)).toBeNull();
   });
 });

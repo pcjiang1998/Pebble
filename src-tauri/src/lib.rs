@@ -502,6 +502,8 @@ pub fn run() {
             commands::accounts::test_pop3_connection,
             commands::accounts::test_account_connection,
             commands::folders::list_folders,
+            commands::folders::get_imap_sync_folders,
+            commands::folders::update_imap_sync_folders,
             commands::messages::query::list_messages,
             commands::messages::query::list_starred_messages,
             commands::messages::query::get_message,

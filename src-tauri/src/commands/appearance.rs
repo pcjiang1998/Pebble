@@ -47,7 +47,8 @@ fn validate_background_image_bytes(bytes: &[u8]) -> Result<&'static str, PebbleE
 }
 
 fn background_images_dir(app: &AppHandle) -> Result<PathBuf, PebbleError> {
-    let app_data = crate::profile::require_managed_app_data_dir(app).map_err(PebbleError::Internal)?;
+    let app_data =
+        crate::profile::require_managed_app_data_dir(app).map_err(PebbleError::Internal)?;
     Ok(app_data.join("backgrounds"))
 }
 

@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
@@ -406,6 +407,21 @@ fn should_attempt_imap_remote_folder(folder: &pebble_core::Folder) -> bool {
     !folder.remote_id.starts_with("__local_")
 }
 
+fn should_include_discovered_imap_folder(
+    folder: &pebble_core::Folder,
+    selected_remote_ids: Option<&HashSet<String>>,
+) -> bool {
+    let Some(selected_remote_ids) = selected_remote_ids else {
+        // Existing accounts without an explicit preference retain the legacy
+        // behaviour of syncing every selectable mailbox.
+        return true;
+    };
+
+    folder.role == Some(pebble_core::FolderRole::Inbox)
+        || folder.remote_id.eq_ignore_ascii_case("INBOX")
+        || selected_remote_ids.contains(&folder.remote_id)
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum ImapPollScope {
     Realtime,
@@ -784,11 +800,32 @@ impl SyncWorker {
     pub async fn initial_sync(&self) -> Result<()> {
         info!("Starting initial sync for account {}", self.base.account_id);
 
-        let remote_folders = self
+        let selected_remote_ids = self
+            .base
+            .store
+            .get_sync_state(&self.base.account_id)?
+            .and_then(|state| state.selected_imap_folder_remote_ids)
+            .map(|ids| ids.into_iter().collect::<HashSet<_>>());
+
+        let discovered_folders = self
             .provider
             .inner()
             .list_folders(&self.base.account_id)
             .await?;
+        let remote_folders: Vec<_> = discovered_folders
+            .into_iter()
+            .filter(|folder| {
+                should_include_discovered_imap_folder(folder, selected_remote_ids.as_ref())
+            })
+            .collect();
+
+        if selected_remote_ids.is_some() {
+            info!(
+                "Applying explicit IMAP folder selection for account {} ({} folders including Inbox)",
+                self.base.account_id,
+                remote_folders.len()
+            );
+        }
 
         for folder in &remote_folders {
             // Upsert folder into store
@@ -1219,8 +1256,9 @@ impl SyncWorker {
 
         let cursor = self.try_imap_folder_cursor_for_sync(folder).await?;
         let since_uid = cursor.last_uid;
+        let limit = if since_uid.is_some() { 50 } else { 200 };
 
-        let count = self.sync_folder(folder, since_uid, 50, true).await?;
+        let count = self.sync_folder(folder, since_uid, limit, true).await?;
         if count > 0 {
             info!(
                 "Polled {} new messages from {} for account {}",
@@ -2226,6 +2264,36 @@ mod tests {
         assert!(!should_poll_imap_folder_for_realtime(&sent));
         assert!(!should_poll_imap_folder_for_realtime(&spam));
         assert!(!should_poll_imap_folder_for_realtime(&custom));
+    }
+
+    #[test]
+    fn explicit_imap_selection_always_includes_inbox() {
+        let inbox = test_folder(Some(pebble_core::FolderRole::Inbox), "INBOX");
+        let sent = test_folder(Some(pebble_core::FolderRole::Sent), "Sent");
+        let custom = test_folder(None, "Newsletters");
+        let selected = HashSet::from(["Newsletters".to_string()]);
+
+        assert!(should_include_discovered_imap_folder(
+            &inbox,
+            Some(&selected)
+        ));
+        assert!(!should_include_discovered_imap_folder(
+            &sent,
+            Some(&selected)
+        ));
+        assert!(should_include_discovered_imap_folder(
+            &custom,
+            Some(&selected)
+        ));
+    }
+
+    #[test]
+    fn missing_imap_selection_preserves_legacy_all_folder_sync() {
+        let sent = test_folder(Some(pebble_core::FolderRole::Sent), "Sent");
+        let custom = test_folder(None, "Newsletters");
+
+        assert!(should_include_discovered_imap_folder(&sent, None));
+        assert!(should_include_discovered_imap_folder(&custom, None));
     }
 
     #[test]

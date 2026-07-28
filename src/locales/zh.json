@@ -216,6 +216,14 @@
     "leaveEmptyKeep": "留空保持不变",
     "signature": "签名",
     "signaturePlaceholder": "输入邮件签名...",
+    "syncFolders": "同步文件夹",
+    "syncFoldersDesc": "收件箱始终同步。请选择还需要保存在本地的其他 IMAP 文件夹。",
+    "chooseFolders": "选择文件夹",
+    "refreshFolders": "刷新文件夹",
+    "loadingFolders": "正在加载...",
+    "folderListFailed": "无法列出 IMAP 文件夹：{{error}}",
+    "alwaysSynced": "始终同步",
+    "syncFoldersCleanupWarning": "保存后会移除未勾选文件夹的本地数据，但不会删除服务器上的邮件。",
     "optional": "可选",
     "oauthAccountNote": "此账户使用 OAuth 登录。服务商登录、密码和 IMAP/SMTP 设置由服务商管理。代理留空时会继承全局 SOCKS5 代理。",
     "deleteAccountSuccess": "账户已成功移除",
@@ -664,7 +672,8 @@
   },
   "thread": {
     "title": "会话",
-    "to": "收件人："
+    "to": "收件人：",
+    "cc": "抄送："
   },
   "errorBoundary": {
     "title": "出了点问题",
@@ -697,6 +706,8 @@
     "unstar": "取消星标"
   },
   "messageDetail": {
-    "body": "邮件正文"
+    "body": "邮件正文",
+    "to": "收件人：",
+    "cc": "抄送："
   }
 }

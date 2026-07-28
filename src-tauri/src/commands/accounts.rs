@@ -406,7 +406,7 @@ pub async fn add_account(
         state.store.set_auth_data(&account.id, &encrypted)?;
 
         // Store non-secret metadata in sync_state
-        let provider_slug = match provider {
+        let provider_slug = match &provider {
             ProviderType::Gmail => "gmail",
             ProviderType::Outlook => "outlook",
             ProviderType::Pop3 => "pop3",
@@ -414,6 +414,12 @@ pub async fn add_account(
         };
         state.store.update_sync_state(&account.id, |s| {
             s.provider = Some(provider_slug.to_string());
+            // New IMAP accounts start with Inbox only. Users can opt into
+            // additional mailboxes from the account editor after the account
+            // exists and its saved credentials can be used for IMAP LIST.
+            if provider == ProviderType::Imap {
+                s.selected_imap_folder_remote_ids = Some(Vec::new());
+            }
         })?;
         Ok(())
     })() {

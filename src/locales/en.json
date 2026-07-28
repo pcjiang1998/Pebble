@@ -221,6 +221,14 @@
     "optional": "optional",
     "signature": "Signature",
     "signaturePlaceholder": "Your email signature...",
+    "syncFolders": "Folders to sync",
+    "syncFoldersDesc": "Inbox is always synced. Choose any additional IMAP folders to keep locally.",
+    "chooseFolders": "Choose folders",
+    "refreshFolders": "Refresh folders",
+    "loadingFolders": "Loading...",
+    "folderListFailed": "Failed to list IMAP folders: {{error}}",
+    "alwaysSynced": "Always synced",
+    "syncFoldersCleanupWarning": "Saving removes locally stored data for folders you uncheck. It does not delete mail from the server.",
     "oauthAccountNote": "This account uses OAuth. Provider sign-in, password, and IMAP/SMTP settings are managed by the provider. Leave the proxy blank to inherit the global SOCKS5 proxy.",
     "deleteAccountSuccess": "Account removed successfully",
     "deleteAccountFailed": "Failed to remove account"
@@ -664,7 +672,8 @@
   },
   "thread": {
     "title": "Thread",
-    "to": "To:"
+    "to": "To:",
+    "cc": "Cc:"
   },
   "errorBoundary": {
     "title": "Something went wrong",
@@ -697,6 +706,8 @@
     "unstar": "Unstar"
   },
   "messageDetail": {
-    "body": "Message body"
+    "body": "Message body",
+    "to": "To:",
+    "cc": "Cc:"
   }
 }

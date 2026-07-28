@@ -8,7 +8,11 @@ import { invoke } from "@tauri-apps/api/core";
 const mockInvoke = vi.mocked(invoke);
 
 import { foldersQueryKey } from "../../src/hooks/queries/useFoldersQuery";
-import { listFolders } from "../../src/lib/api";
+import {
+  getImapSyncFolders,
+  listFolders,
+  updateImapSyncFolders,
+} from "../../src/lib/api";
 
 describe("useFoldersQuery", () => {
   beforeEach(() => {
@@ -52,5 +56,24 @@ describe("useFoldersQuery", () => {
 
     expect(result).toEqual(mockFolders);
     expect(mockInvoke).toHaveBeenCalledWith("list_folders", { accountId: "a1" });
+  });
+
+  it("discovers and updates the selected IMAP folders", async () => {
+    const settings = {
+      folders: [],
+      selected_remote_ids: ["INBOX"],
+    };
+    mockInvoke.mockResolvedValueOnce(settings).mockResolvedValueOnce(settings);
+
+    await expect(getImapSyncFolders("a1")).resolves.toEqual(settings);
+    expect(mockInvoke).toHaveBeenNthCalledWith(1, "get_imap_sync_folders", {
+      accountId: "a1",
+    });
+
+    await expect(updateImapSyncFolders("a1", ["INBOX"])).resolves.toEqual(settings);
+    expect(mockInvoke).toHaveBeenNthCalledWith(2, "update_imap_sync_folders", {
+      accountId: "a1",
+      selectedRemoteIds: ["INBOX"],
+    });
   });
 });

@@ -74,7 +74,14 @@ export default function ThreadMessageBubble({ message, defaultExpanded = false }
         <div style={{ padding: "12px 14px", borderTop: "1px solid var(--color-border)" }}>
           {/* To/Cc line */}
           <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginBottom: "8px" }}>
-            {t("thread.to")} {message.to_list?.map((r: { address: string }) => r.address).join(", ")}
+            <div>
+              {t("thread.to")} {message.to_list?.map((r: { address: string }) => r.address).join(", ")}
+            </div>
+            {message.cc_list?.length > 0 && (
+              <div>
+                {t("thread.cc", "Cc:")} {message.cc_list.map((r: { address: string }) => r.address).join(", ")}
+              </div>
+            )}
           </div>
           {/* Body content */}
           {rendered?.html ? (

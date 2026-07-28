@@ -148,7 +148,7 @@ pub(super) fn remove_search_documents(
 /// Use this instead of calling `refresh_search_document` in a loop: one commit
 /// for N messages is dramatically cheaper than N commits (segment flush +
 /// reader reload per doc).
-pub(super) fn refresh_search_documents(
+pub(crate) fn refresh_search_documents(
     state: &AppState,
     message_ids: &[String],
 ) -> std::result::Result<(), PebbleError> {

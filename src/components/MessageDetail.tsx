@@ -221,6 +221,7 @@ export default function MessageDetail({ messageId, onBack, folderRole }: Props) 
   }
 
   const recipientLine = formatRecipients(message.to_list);
+  const ccLine = formatRecipients(message.cc_list);
 
   return (
     <div
@@ -337,7 +338,12 @@ export default function MessageDetail({ messageId, onBack, folderRole }: Props) 
             )}
             {recipientLine && (
               <span style={{ color: "var(--color-text-secondary)", marginLeft: "6px", fontSize: "12px" }}>
-                to&nbsp;{recipientLine}
+                {t("messageDetail.to", "To:")}&nbsp;{recipientLine}
+              </span>
+            )}
+            {ccLine && (
+              <span style={{ color: "var(--color-text-secondary)", marginLeft: "6px", fontSize: "12px" }}>
+                {t("messageDetail.cc", "Cc:")}&nbsp;{ccLine}
               </span>
             )}
           </div>
